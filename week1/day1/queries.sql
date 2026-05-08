@@ -88,3 +88,62 @@ FROM employee
 GROUP BY department_id
 ORDER BY avg_salary DESC
 LIMIT 1;
+
+-- 26
+SELECT department_id,
+       COUNT(emp_id) AS emp_count
+FROM employee
+GROUP BY department_id
+HAVING COUNT(emp_id) > 2;
+-- 
+SELECT department_id,
+       COUNT(emp_id) AS emp_count
+FROM employee
+GROUP BY department_id;
+
+-- 27
+SELECT department_id,
+AVG(salary) as avg_salary
+from employee
+group by department_id
+having AVG(salary) > 55000;
+
+-- 28
+select YEAR(hire_date), count(emp_id) as emp_count
+from employee
+group by YEAR(hire_date)
+having count(emp_id) > 1;
+
+-- 29
+select department_id,SUM(salary) as total
+from employee
+group by department_id
+having sum(salary) < 100000;
+
+-- 30
+select department_id,SUM(salary)
+from employee
+group by department_id
+having sum(salary) > 75000;
+
+-- 31
+select * from employee
+order by salary;
+
+-- 32
+select * from employee
+order by age desc;
+
+-- 33
+select * from employee
+order by hire_date asc;
+
+-- 34
+select * from employee
+order by department_id,salary;
+
+-- 35
+select department_id,sum(salary) as total
+from employee
+group by department_id
+order by sum(salary);
