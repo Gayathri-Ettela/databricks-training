@@ -328,5 +328,161 @@ There are no results to be displayed.
 | 1             | 65000.0    |
 
 ---
+**Query #26**
 
-[View on DB Fiddle](https://www.db-fiddle.com/)
+    -- 26
+    SELECT department_id,
+           COUNT(emp_id) AS emp_count
+    FROM employee
+    GROUP BY department_id
+    HAVING COUNT(emp_id) > 2;
+
+There are no results to be displayed.
+
+---
+**Query #27**
+
+    -- 
+    SELECT department_id,
+           COUNT(emp_id) AS emp_count
+    FROM employee
+    GROUP BY department_id;
+
+| department_id | emp_count |
+| ------------- | --------- |
+| 1             | 2         |
+| 2             | 2         |
+| 3             | 1         |
+
+---
+**Query #28**
+
+    -- 27
+    SELECT department_id,
+    AVG(salary) as avg_salary
+    from employee
+    group by department_id
+    having AVG(salary) > 55000;
+
+| department_id | avg_salary |
+| ------------- | ---------- |
+| 1             | 65000.0    |
+
+---
+**Query #29**
+
+    -- 28
+    select YEAR(hire_date), count(emp_id) as emp_count
+    from employee
+    group by YEAR(hire_date)
+    having count(emp_id) > 1;
+
+| YEAR(hire_date) | emp_count |
+| --------------- | --------- |
+| 2019            | 2         |
+
+---
+**Query #30**
+
+    -- 29
+    select department_id,SUM(salary) as total
+    from employee
+    group by department_id
+    having sum(salary) < 100000;
+
+| department_id | total |
+| ------------- | ----- |
+| 3             | 45000 |
+
+---
+**Query #31**
+
+    -- 30
+    select department_id,SUM(salary)
+    from employee
+    group by department_id
+    having sum(salary) > 75000;
+
+| department_id | SUM(salary) |
+| ------------- | ----------- |
+| 1             | 130000      |
+| 2             | 110000      |
+
+---
+**Query #32**
+
+    -- 31
+    select * from employee
+    order by salary;
+
+| emp_id | name       | age | salary | department_id | hire_date  |
+| ------ | ---------- | --- | ------ | ------------- | ---------- |
+| 4      | Alice Blue | 25  | 45000  | 3             | 2021-03-22 |
+| 1      | John Doe   | 28  | 50000  | 1             | 2020-01-15 |
+| 5      | Charlie P. | 29  | 50000  | 2             | 2019-12-01 |
+| 2      | Jane Smith | 34  | 60000  | 2             | 2019-07-23 |
+| 3      | Bob Brown  | 45  | 80000  | 1             | 2018-02-12 |
+
+---
+**Query #33**
+
+    -- 32
+    select * from employee
+    order by age desc;
+
+| emp_id | name       | age | salary | department_id | hire_date  |
+| ------ | ---------- | --- | ------ | ------------- | ---------- |
+| 3      | Bob Brown  | 45  | 80000  | 1             | 2018-02-12 |
+| 2      | Jane Smith | 34  | 60000  | 2             | 2019-07-23 |
+| 5      | Charlie P. | 29  | 50000  | 2             | 2019-12-01 |
+| 1      | John Doe   | 28  | 50000  | 1             | 2020-01-15 |
+| 4      | Alice Blue | 25  | 45000  | 3             | 2021-03-22 |
+
+---
+**Query #34**
+
+    -- 33
+    select * from employee
+    order by hire_date asc;
+
+| emp_id | name       | age | salary | department_id | hire_date  |
+| ------ | ---------- | --- | ------ | ------------- | ---------- |
+| 3      | Bob Brown  | 45  | 80000  | 1             | 2018-02-12 |
+| 2      | Jane Smith | 34  | 60000  | 2             | 2019-07-23 |
+| 5      | Charlie P. | 29  | 50000  | 2             | 2019-12-01 |
+| 1      | John Doe   | 28  | 50000  | 1             | 2020-01-15 |
+| 4      | Alice Blue | 25  | 45000  | 3             | 2021-03-22 |
+
+---
+**Query #35**
+
+    -- 34
+    select * from employee
+    order by department_id,salary;
+
+| emp_id | name       | age | salary | department_id | hire_date  |
+| ------ | ---------- | --- | ------ | ------------- | ---------- |
+| 1      | John Doe   | 28  | 50000  | 1             | 2020-01-15 |
+| 3      | Bob Brown  | 45  | 80000  | 1             | 2018-02-12 |
+| 5      | Charlie P. | 29  | 50000  | 2             | 2019-12-01 |
+| 2      | Jane Smith | 34  | 60000  | 2             | 2019-07-23 |
+| 4      | Alice Blue | 25  | 45000  | 3             | 2021-03-22 |
+
+---
+**Query #36**
+
+    -- 35
+    select department_id,sum(salary) as total
+    from employee
+    group by department_id
+    order by sum(salary);
+
+| department_id | total  |
+| ------------- | ------ |
+| 3             | 45000  |
+| 2             | 110000 |
+| 1             | 130000 |
+
+---
+
+[View on DB Fiddle](https://www.db-fiddle.com/f/eGFcyvPxadhBcx3Dv3NYN2/0)
