@@ -1,1 +1,462 @@
+**Schema (PostgreSQL v18)**
 
+    CREATE TABLE employee (
+        emp_id INT,
+        name VARCHAR(50),
+        age INT,
+        salary INT,
+        department_id INT,
+        hire_date DATE
+    );
+    
+    INSERT INTO employee VALUES
+    (1, 'John Doe', 28, 50000, 1, '2020-01-15'),
+    (2, 'Jane Smith', 34, 60000, 2, '2019-07-23'),
+    (3, 'Bob Brown', 45, 80000, 1, '2018-02-12'),
+    (4, 'Alice Blue', 25, 45000, 3, '2021-03-22'),
+    (5, 'Charlie P.', 29, 50000, 2, '2019-12-01');
+    
+    CREATE TABLE department (
+        department_id INT,
+        name VARCHAR(50)
+    );
+    
+    INSERT INTO department VALUES
+    (1, 'IT'),
+    (2, 'HR'),
+    (3, 'Finance'),
+    (4, 'Marketing');
+    
+    CREATE TABLE project (
+        project_id INT,
+        name VARCHAR(50),
+        department_id INT
+    );
+    
+    INSERT INTO project VALUES
+    (1, 'Project Alpha', 1),
+    (2, 'Project Beta', 2),
+    (3, 'Project Gamma', 1),
+    (4, 'Project Delta', 3),
+    (5, 'Project Epsilon', 4)
+
+---
+
+**Query #1**
+
+    -- 36
+    SELECT e.name AS employee_name, d.name AS department_name
+    FROM employee e
+    INNER JOIN department d
+    ON e.department_id = d.department_id;
+
+| employee_name | department_name |
+| ------------- | --------------- |
+| John Doe      | IT              |
+| Bob Brown     | IT              |
+| Jane Smith    | HR              |
+| Charlie P.    | HR              |
+| Alice Blue    | Finance         |
+
+---
+**Query #2**
+
+    -- 37
+    SELECT p.name AS project_name, d.name AS department_name
+    FROM project p
+    INNER JOIN department d
+    ON p.project_id = d.department_id;
+
+| project_name  | department_name |
+| ------------- | --------------- |
+| Project Alpha | IT              |
+| Project Beta  | HR              |
+| Project Gamma | Finance         |
+| Project Delta | Marketing       |
+
+---
+**Query #3**
+
+    -- 38
+    SELECT e.name AS employee_name, p.name AS project_name
+    FROM employee e
+    INNER JOIN project p
+    ON e.department_id = p.project_id;
+
+| employee_name | project_name  |
+| ------------- | ------------- |
+| John Doe      | Project Alpha |
+| Bob Brown     | Project Alpha |
+| Jane Smith    | Project Beta  |
+| Charlie P.    | Project Beta  |
+| Alice Blue    | Project Gamma |
+
+---
+**Query #4**
+
+    -- 39
+    SELECT e.name AS employee_name, d.name AS department_name
+    FROM employee e
+    LEFT JOIN department d
+    ON e.department_id = d.department_id;
+
+| employee_name | department_name |
+| ------------- | --------------- |
+| John Doe      | IT              |
+| Bob Brown     | IT              |
+| Jane Smith    | HR              |
+| Charlie P.    | HR              |
+| Alice Blue    | Finance         |
+
+---
+**Query #5**
+
+    -- 40
+    SELECT e.name AS employee_name, d.name AS department_name
+    FROM department d
+    LEFT JOIN employee e
+    ON e.department_id = d.department_id;
+
+| employee_name | department_name |
+| ------------- | --------------- |
+| John Doe      | IT              |
+| Bob Brown     | IT              |
+| Jane Smith    | HR              |
+| Charlie P.    | HR              |
+| Alice Blue    | Finance         |
+|               | Marketing       |
+
+---
+**Query #6**
+
+    -- 41
+    SELECT e.name AS employee_name, p.name AS project_name
+    FROM employee e
+    INNER JOIN project p
+    ON e.department_id = p.project_id
+    where e.emp_id=null;
+
+There are no results to be displayed.
+
+---
+**Query #7**
+
+    -- 42
+    select d.name as department_name,count(project_id)
+    from department d
+    left join project p on d.department_id=p.project_id
+    group by d.name,d.department_id;
+
+| department_name | count |
+| --------------- | ----- |
+| HR              | 1     |
+| Finance         | 1     |
+| IT              | 1     |
+| Marketing       | 1     |
+
+---
+**Query #8**
+
+    -- 43
+    select d.name as department_name,e.name as employee_name
+    from department d
+    left join employee e on d.department_id=e.department_id
+    where e.department_id=null;
+
+There are no results to be displayed.
+
+---
+**Query #9**
+
+    -- 44
+    SELECT e.name
+    FROM employee e
+    WHERE e.department_id = (
+        SELECT department_id
+        FROM employee
+        WHERE name = 'John Doe'
+    );
+
+| name      |
+| --------- |
+| John Doe  |
+| Bob Brown |
+
+---
+**Query #10**
+
+    -- 45
+    select d.name as department_name,avg(e.salary) as aevarage_salary
+    from department d
+    left join employee e on e.department_id=d.department_id
+    group by d.name,d.department_id;
+
+| department_name | aevarage_salary    |
+| --------------- | ------------------ |
+| HR              | 55000.000000000000 |
+| Finance         | 45000.000000000000 |
+| IT              | 65000.000000000000 |
+| Marketing       |                    |
+
+---
+**Query #11**
+
+    -- 46
+    select max(salary) from employee;
+
+| max   |
+| ----- |
+| 80000 |
+
+---
+**Query #12**
+
+    -- 47
+    SELECT AVG(salary) AS average_salary
+    FROM employee
+    WHERE salary > (
+        SELECT AVG(salary)
+        FROM employee
+    );
+
+| average_salary     |
+| ------------------ |
+| 70000.000000000000 |
+
+---
+**Query #13**
+
+    -- 48
+    SELECT MAX(salary) AS second_highest_salary
+    FROM employee
+    WHERE salary < (
+        SELECT MAX(salary)
+        FROM employee
+    );
+
+| second_highest_salary |
+| --------------------- |
+| 60000                 |
+
+---
+**Query #14**
+
+    -- 49
+    SELECT d.name AS department_name,
+           COUNT(e.emp_id) AS employee_count
+    FROM department d
+    INNER JOIN employee e
+    ON d.department_id = e.department_id
+    GROUP BY d.department_id, d.name
+    ORDER BY employee_count DESC
+    LIMIT 1;
+
+| department_name | employee_count |
+| --------------- | -------------- |
+| HR              | 2              |
+
+---
+**Query #15**
+
+    -- 50
+    select name,salary,employee.department_id
+    from employee
+    where salary > (
+      select avg(salary) from employee 
+      WHERE department_id = employee.department_id
+    );
+
+| name       | salary | department_id |
+| ---------- | ------ | ------------- |
+| Jane Smith | 60000  | 2             |
+| Bob Brown  | 80000  | 1             |
+
+---
+**Query #16**
+
+    -- 51
+     SELECT salary
+    FROM (
+        SELECT salary,
+               DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk
+        FROM employee
+    ) t
+    WHERE rnk = 3;
+
+| salary |
+| ------ |
+| 50000  |
+| 50000  |
+
+---
+**Query #17**
+
+    -- 52
+    select name, age from employee
+    where age >(
+      select max(age) from employee
+      where department_id= (
+        select department_id from department
+        where name='HR')
+      );
+
+| name      | age |
+| --------- | --- |
+| Bob Brown | 45  |
+
+---
+**Query #18**
+
+    -- 53
+      SELECT department_id, AVG(salary) AS avg_salary
+    FROM employee
+    GROUP BY department_id
+    HAVING AVG(salary) > 55000;
+
+| department_id | avg_salary         |
+| ------------- | ------------------ |
+| 1             | 65000.000000000000 |
+
+---
+**Query #19**
+
+    -- 54
+    
+    
+    -- 55
+    
+    
+    
+    
+    
+    -- 56
+    SELECT SUM(salary) AS total_salary
+    FROM employee
+    WHERE extract(YEAR from hire_date) = 2020;
+
+| total_salary |
+| ------------ |
+| 50000        |
+
+---
+**Query #20**
+
+    -- 57 
+    SELECT department_id,
+           AVG(salary) AS avg_salary
+    FROM employee
+    GROUP BY department_id
+    ORDER BY avg_salary DESC;
+
+| department_id | avg_salary         |
+| ------------- | ------------------ |
+| 1             | 65000.000000000000 |
+| 2             | 55000.000000000000 |
+| 3             | 45000.000000000000 |
+
+---
+**Query #21**
+
+    -- 58
+    select department_id,avg(salary),count(name) from employee
+    group by department_id
+    having avg(salary) >55000 and count(name) >1;
+
+| department_id | avg                | count |
+| ------------- | ------------------ | ----- |
+| 1             | 65000.000000000000 | 2     |
+
+---
+**Query #22**
+
+    -- 59
+    SELECT *
+    FROM employee
+    WHERE hire_date >= CURRENT_DATE - INTERVAL '2 years'
+    ORDER BY hire_date;
+
+There are no results to be displayed.
+
+---
+**Query #23**
+
+    -- 60
+    select department_id, avg(salary) ,count(*) from employee
+    group by department_id
+    having count(*) >2;
+
+There are no results to be displayed.
+
+---
+**Query #24**
+
+    -- 61
+    select name, salary from employee
+    where salary >(
+      select avg(salary) from employee);
+
+| name       | salary |
+| ---------- | ------ |
+| Jane Smith | 60000  |
+| Bob Brown  | 80000  |
+
+---
+**Query #25**
+
+    -- 62
+      select name from employee
+      where hire_date =(
+        select min(hire_date) from employee);
+
+| name      |
+| --------- |
+| Bob Brown |
+
+---
+**Query #26**
+
+    -- 63
+     SELECT d.name AS department_name,
+           COUNT(p.project_id) AS total_projects
+    FROM department d
+    LEFT JOIN project p
+    ON d.department_id = p.department_id
+    GROUP BY d.name
+    ORDER BY total_projects DESC;
+
+| department_name | total_projects |
+| --------------- | -------------- |
+| IT              | 2              |
+| Marketing       | 1              |
+| Finance         | 1              |
+| HR              | 1              |
+
+---
+**Query #27**
+
+    -- 64
+    select max(salary), department_id from employee
+    group by department_id;
+
+| max   | department_id |
+| ----- | ------------- |
+| 45000 | 3             |
+| 60000 | 2             |
+| 80000 | 1             |
+
+---
+**Query #28**
+
+    -- 65
+    select name,salary,age from employee
+    where age >(
+      select avg(age) from employee);
+
+| name       | salary | age |
+| ---------- | ------ | --- |
+| Jane Smith | 60000  | 34  |
+| Bob Brown  | 80000  | 45  |
+
+---
+
+[View on DB Fiddle](https://www.db-fiddle.com/)
