@@ -321,14 +321,41 @@ There are no results to be displayed.
 **Query #19**
 
     -- 54
-    
-    
+    SELECT *
+    FROM employee
+    WHERE department_id IN
+    (
+        SELECT department_id
+        FROM project
+        GROUP BY department_id
+        HAVING COUNT(*) >= 2
+    );
+
+| emp_id | name      | age | salary | department_id | hire_date  |
+| ------ | --------- | --- | ------ | ------------- | ---------- |
+| 1      | John Doe  | 28  | 50000  | 1             | 2020-01-15 |
+| 3      | Bob Brown | 45  | 80000  | 1             | 2018-02-12 |
+
+---
+**Query #20**
+
     -- 55
-    
-    
-    
-    
-    
+    SELECT *
+    FROM employee
+    WHERE hire_date =
+    (
+        SELECT hire_date
+        FROM employee
+        WHERE name = 'Jane Smith'
+    );
+
+| emp_id | name       | age | salary | department_id | hire_date  |
+| ------ | ---------- | --- | ------ | ------------- | ---------- |
+| 2      | Jane Smith | 34  | 60000  | 2             | 2019-07-23 |
+
+---
+**Query #21**
+
     -- 56
     SELECT SUM(salary) AS total_salary
     FROM employee
@@ -339,7 +366,7 @@ There are no results to be displayed.
 | 50000        |
 
 ---
-**Query #20**
+**Query #22**
 
     -- 57 
     SELECT department_id,
@@ -355,7 +382,7 @@ There are no results to be displayed.
 | 3             | 45000.000000000000 |
 
 ---
-**Query #21**
+**Query #23**
 
     -- 58
     select department_id,avg(salary),count(name) from employee
@@ -367,7 +394,7 @@ There are no results to be displayed.
 | 1             | 65000.000000000000 | 2     |
 
 ---
-**Query #22**
+**Query #24**
 
     -- 59
     SELECT *
@@ -378,7 +405,7 @@ There are no results to be displayed.
 There are no results to be displayed.
 
 ---
-**Query #23**
+**Query #25**
 
     -- 60
     select department_id, avg(salary) ,count(*) from employee
@@ -388,7 +415,7 @@ There are no results to be displayed.
 There are no results to be displayed.
 
 ---
-**Query #24**
+**Query #26**
 
     -- 61
     select name, salary from employee
@@ -401,7 +428,7 @@ There are no results to be displayed.
 | Bob Brown  | 80000  |
 
 ---
-**Query #25**
+**Query #27**
 
     -- 62
       select name from employee
@@ -413,7 +440,7 @@ There are no results to be displayed.
 | Bob Brown |
 
 ---
-**Query #26**
+**Query #28**
 
     -- 63
      SELECT d.name AS department_name,
@@ -432,7 +459,7 @@ There are no results to be displayed.
 | HR              | 1              |
 
 ---
-**Query #27**
+**Query #29**
 
     -- 64
     select max(salary), department_id from employee
@@ -445,7 +472,7 @@ There are no results to be displayed.
 | 80000 | 1             |
 
 ---
-**Query #28**
+**Query #30**
 
     -- 65
     select name,salary,age from employee
