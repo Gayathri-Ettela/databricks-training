@@ -124,10 +124,25 @@ GROUP BY department_id
 HAVING AVG(salary) > 55000;
 
 -- 54
-
+SELECT *
+FROM employee
+WHERE department_id IN
+(
+    SELECT department_id
+    FROM project
+    GROUP BY department_id
+    HAVING COUNT(*) >= 2
+);
 
 -- 55
-
+SELECT *
+FROM employee
+WHERE hire_date =
+(
+    SELECT hire_date
+    FROM employee
+    WHERE name = 'Jane Smith'
+);
 
 
 
